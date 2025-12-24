@@ -1,24 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>🎄 Christmas Surprise 🎁</title>
 <style>
 body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
   background: linear-gradient(to bottom, #0b3d2e, #145a32);
-  color: white;
   font-family: Arial, sans-serif;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   text-align: center;
-  padding-top: 60px;
 }
+
 .box {
   background: rgba(255,255,255,0.15);
   padding: 30px;
-  border-radius: 15px;
+  border-radius: 20px;
   width: 90%;
   max-width: 400px;
+  box-shadow: 0 0 20px rgba(255,255,255,0.2);
   margin: auto;
 }
+
+input {
+  padding: 12px;
+  width: 80%;
+  border-radius: 10px;
+  border: none;
+  margin-top: 15px;
+  font-size: 16px;
+}
+
 button {
   background: #e74c3c;
   border: none;
@@ -27,13 +45,51 @@ button {
   font-size: 18px;
   border-radius: 30px;
   cursor: pointer;
+  margin-top: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  transition: transform 0.2s, background 0.2s;
 }
 button:hover {
+  transform: scale(1.1);
   background: #c0392b;
 }
+
 h1 {
   font-size: 28px;
 }
+
+p {
+  font-size: 18px;
+}
+
+/* Fade-in animation for message */
+#step2 {
+  display: none;
+  animation: fadeIn 1s;
+}
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+/* Snow animation */
+.snowflake {
+  position: fixed;
+  top: -10px;
+  color: white;
+  font-size: 1em;
+  user-select: none;
+  pointer-events: none;
+  z-index: 9999;
+  animation-name: fall;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+}
+@keyframes fall {
+  0% { transform: translateY(0) translateX(0); opacity:1;}
+  100% { transform: translateY(100vh) translateX(50px); opacity:0;}
+}
+
 </style>
 </head>
 
@@ -41,28 +97,48 @@ h1 {
 
 <div class="box" id="step1">
   <h1>🎄 Christmas Surprise 🎁</h1>
-  <p>Enter your name to reveal your message</p>
-  <input id="name" placeholder="Your name" style="padding:10px;width:80%;border-radius:10px;border:none;">
-  <br><br>
+  <p>Enter your name to reveal your special message</p>
+  <input type="text" id="name" placeholder="Your name">
+  <br>
   <button onclick="showMessage()">Reveal 🎅</button>
 </div>
 
-<div class="box" id="step2" style="display:none;">
+<div class="box" id="step2">
   <h1 id="message"></h1>
   <p>🎄🎁 May your Christmas be full of joy, love, and blessings 🎁🎄</p>
 </div>
 
+<!-- Background music -->
+<audio id="music" loop autoplay>
+  <source src="https://cdn.pixabay.com/download/audio/2022/11/14/audio_25bb4f1b1d.mp3?filename=jingle-bells-11059.mp3" type="audio/mpeg">
+</audio>
+
 <script>
+// Snow effect
+function createSnowflake() {
+  const snowflake = document.createElement('div');
+  snowflake.classList.add('snowflake');
+  snowflake.textContent = '❄';
+  snowflake.style.left = Math.random() * window.innerWidth + 'px';
+  snowflake.style.fontSize = Math.random() * 20 + 10 + 'px';
+  snowflake.style.animationDuration = Math.random() * 5 + 5 + 's';
+  snowflake.style.opacity = Math.random();
+  document.body.appendChild(snowflake);
+  setTimeout(() => snowflake.remove(), 10000);
+}
+setInterval(createSnowflake, 200);
+
+// Show message
 function showMessage() {
-  var name = document.getElementById("name").value;
-  if(name.trim() === "") {
+  const name = document.getElementById("name").value.trim();
+  if(name === "") {
     alert("Please enter your name 😊");
     return;
   }
   document.getElementById("step1").style.display = "none";
-  document.getElementById("step2").style.display = "block";
-  document.getElementById("message").innerHTML =
-    "🎅 Merry Christmas, " + name + "! 🎄";
+  const step2 = document.getElementById("step2");
+  step2.style.display = "block";
+  document.getElementById("message").textContent = `🎅 Merry Christmas, ${name}! 🎄`;
 }
 </script>
 
