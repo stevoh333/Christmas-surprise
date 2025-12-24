@@ -23,7 +23,7 @@ body {
   padding: 30px;
   border-radius: 20px;
   width: 90%;
-  max-width: 400px;
+  max-width: 450px;
   box-shadow: 0 0 20px rgba(255,255,255,0.2);
   margin: auto;
 }
@@ -90,6 +90,16 @@ p {
   100% { transform: translateY(100vh) translateX(50px); opacity:0;}
 }
 
+/* Fireworks container */
+#fireworks {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+}
 </style>
 </head>
 
@@ -109,9 +119,12 @@ p {
 </div>
 
 <!-- Background music -->
-<audio id="music" loop autoplay>
+<audio id="music" loop>
   <source src="https://cdn.pixabay.com/download/audio/2022/11/14/audio_25bb4f1b1d.mp3?filename=jingle-bells-11059.mp3" type="audio/mpeg">
 </audio>
+
+<!-- Fireworks container -->
+<canvas id="fireworks"></canvas>
 
 <script>
 // Snow effect
@@ -128,7 +141,7 @@ function createSnowflake() {
 }
 setInterval(createSnowflake, 200);
 
-// Show message
+// Show message and play music
 function showMessage() {
   const name = document.getElementById("name").value.trim();
   if(name === "") {
@@ -139,8 +152,52 @@ function showMessage() {
   const step2 = document.getElementById("step2");
   step2.style.display = "block";
   document.getElementById("message").textContent = `🎅 Merry Christmas, ${name}! 🎄`;
+  
+  // Play music
+  const music = document.getElementById("music");
+  music.play();
+
+  // Launch fireworks
+  launchFireworks();
+}
+
+// Simple fireworks effect
+function launchFireworks() {
+  const canvas = document.getElementById("fireworks");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext("2d");
+
+  const particles = [];
+  for (let i = 0; i < 100; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 3 + 2,
+      dx: (Math.random() - 0.5) * 6,
+      dy: (Math.random() - 0.5) * 6,
+      color: `hsl(${Math.random() * 360},100%,50%)`
+    });
+  }
+
+  function animate() {
+    ctx.fillStyle = "rgba(11,61,46,0.2)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+      p.x += p.dx;
+      p.y += p.dy;
+      if(p.x < 0 || p.x > canvas.width) p.dx *= -1;
+      if(p.y < 0 || p.y > canvas.height) p.dy *= -1;
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
 }
 </script>
 
 </body>
-</html>
+</html> 
